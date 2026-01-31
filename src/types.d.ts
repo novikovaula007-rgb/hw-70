@@ -16,3 +16,9 @@ export interface IContactMutation {
 export interface IContactAPI {
     [key: string]: IContactMutation
 }
+
+export interface IContactInList {
+    id: string,
+    name: string,
+    photo: string
+}
