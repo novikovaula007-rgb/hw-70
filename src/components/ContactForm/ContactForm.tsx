@@ -52,7 +52,7 @@ const ContactForm: React.FC<Props> = ({isEditing, editId, initialValueForm = ini
 
     const onSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const contactForm = {...form, photo: previewURL};
+        const contactForm = {...form, photo: previewURL || initialPreviewURL};
 
         if (contactForm.phone.length < 7 || contactForm.phone.length > 15) {
             toast.error('The phone number you entered is incorrect. It is between 7 and 15 characters long.');

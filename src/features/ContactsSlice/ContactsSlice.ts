@@ -62,15 +62,14 @@ export const editContact = createAsyncThunk<void, IContact>(
             email: contact.email,
             phone: contact.phone
         }
-
-        await axiosAPI.put(`contacts/${contact.id}`, editedContact)
+        await axiosAPI.put(`contacts/${contact.id}.json`, editedContact)
     }
 )
 
 export const deleteContact = createAsyncThunk<void, string>(
     'contacts/deleteContact',
     async(id) => {
-        await axiosAPI.delete(`contacts/${id}`)
+        await axiosAPI.delete(`contacts/${id}.json`)
     }
 )
 
