@@ -1,8 +1,11 @@
+import {Box} from "@mui/material";
+import ContactForm from "../../components/ContactForm/ContactForm.tsx";
+
 const AddContact = () => {
     return (
-        <div>
-
-        </div>
+        <Box>
+            <ContactForm/>
+        </Box>
     );
 };
 

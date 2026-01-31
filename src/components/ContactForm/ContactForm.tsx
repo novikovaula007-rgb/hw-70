@@ -9,6 +9,7 @@ import {addContact} from "../../features/ContactsSlice/ContactsSlice.ts";
 import React from "react";
 import {toast} from "react-toastify";
 import type {IContactMutation} from "../../types";
+import {useNavigate} from "react-router-dom";
 
 const initialContactForm: IContactMutation = {
     name: '',
@@ -28,6 +29,7 @@ const ContactForm: React.FC<Props> = ({isEditing, editId, initialValueForm = ini
 
     const loadingForm = useAppSelect(selectContactsLoading).loadingForm;
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const [form, setForm] = useState<IContactMutation>(initialValueForm);
     const [previewURL, setPreviewURL] = useState<string>(initialPreviewURL);
@@ -51,27 +53,26 @@ const ContactForm: React.FC<Props> = ({isEditing, editId, initialValueForm = ini
     const onSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
         const contactForm = {...form, photo: previewURL};
+
         if (contactForm.phone.length < 7 || contactForm.phone.length > 15) {
-            toast.error('The phone number you entered is incorrect. It is between 7 and 15 characters long.')
+            toast.error('The phone number you entered is incorrect. It is between 7 and 15 characters long.');
         }
-        if (contactForm.name.trim() && contactForm.email.trim()) {
+
+        if (contactForm.name.trim() && contactForm.email.trim() && contactForm.phone.length >= 7 && contactForm.phone.length <= 15) {
             if (isEditing && editId) {
-                await dispatch(editContact({...contactForm, id: editId}))
+                await dispatch(editContact({...contactForm, id: editId}));
+            } else {
+                await dispatch(addContact(contactForm));
             }
-            await dispatch(addContact(contactForm))
+            setForm(initialContactForm);
+            navigate('/contacts')
         } else {
-            toast.error('Fill all fields.')
+            toast.error('Fill all fields.');
         }
     }
 
     useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            setPreviewURL(form.photo);
-        }, 500);
-
-        return () => {
-            clearTimeout(timeoutId);
-        }
+        setPreviewURL(form.photo);
     }, [form.photo]);
 
     return (

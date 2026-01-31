@@ -1,8 +1,15 @@
+import {Grid} from "@mui/material";
+
 const ContactCard = () => {
     return (
-        <div>
+        <Grid container spacing={5}>
+            <Grid size={4}>
 
-        </div>
+            </Grid>
+            <Grid size={8}>
+
+            </Grid>
+        </Grid>
     );
 };
 
