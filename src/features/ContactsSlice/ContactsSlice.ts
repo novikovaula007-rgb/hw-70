@@ -1,4 +1,4 @@
-import type {IContact, IContactAPI, IContactInList} from "../../types";
+import type {IContact, IContactAPI, IContactInList, IContactMutation} from "../../types";
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import type {RootState} from "../../app/store.ts";
 import {axiosAPI} from "../../axiosAPI.ts";
@@ -9,7 +9,8 @@ interface ContactsState {
     loading: {
         loadingForm: boolean,
         loadingModalContact: boolean,
-        loadingFetchContacts: boolean
+        loadingFetchContacts: boolean,
+        loadingDeleteContact: boolean
     }
 }
 
@@ -19,7 +20,8 @@ const initialState: ContactsState = {
     loading: {
         loadingForm: false,
         loadingModalContact: false,
-        loadingFetchContacts: false
+        loadingFetchContacts: false,
+        loadingDeleteContact: false
     }
 }
 
@@ -51,6 +53,34 @@ const fetchSelectedContact = createAsyncThunk<IContact, string>(
     }
 )
 
+const editContact = createAsyncThunk<void, IContact>(
+    'contacts/editContact',
+    async(contact) => {
+        const editedContact: IContactMutation = {
+            name: contact.name,
+            photo: contact.photo,
+            email: contact.email,
+            phone: contact.phone
+        }
+
+        await axiosAPI.put(`contacts/${contact.id}`, editedContact)
+    }
+)
+
+const deleteContact = createAsyncThunk<void, string>(
+    'contacts/deleteContact',
+    async(id) => {
+        await axiosAPI.delete(`contacts/${id}`)
+    }
+)
+
+const addContact = createAsyncThunk<void, IContactMutation>(
+    'contacts/addContact',
+    async(contact) => {
+        await axiosAPI.post('contacts.json', contact)
+    }
+)
+
 export const ContactsSlice = createSlice({
     name: 'contactsApp',
     initialState,
@@ -76,6 +106,33 @@ export const ContactsSlice = createSlice({
             })
             .addCase(fetchSelectedContact.rejected, (state) => {
                 state.loading.loadingModalContact = false;
+            })
+            .addCase(editContact.pending, (state) => {
+                state.loading.loadingForm = true;
+            })
+            .addCase(editContact.fulfilled, (state) => {
+                state.loading.loadingForm = false;
+            })
+            .addCase(editContact.rejected, (state) => {
+                state.loading.loadingForm = false;
+            })
+            .addCase(addContact.pending, (state) => {
+                state.loading.loadingForm = true;
+            })
+            .addCase(addContact.fulfilled, (state) => {
+                state.loading.loadingForm = false;
+            })
+            .addCase(addContact.rejected, (state) => {
+                state.loading.loadingForm = false;
+            })
+            .addCase(deleteContact.pending, (state) => {
+                state.loading.loadingDeleteContact = true;
+            })
+            .addCase(deleteContact.fulfilled, (state) => {
+                state.loading.loadingDeleteContact = false;
+            })
+            .addCase(deleteContact.rejected, (state) => {
+                state.loading.loadingDeleteContact = false;
             })
     }
 })
