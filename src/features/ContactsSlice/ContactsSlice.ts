@@ -25,7 +25,7 @@ const initialState: ContactsState = {
     }
 }
 
-const fetchContacts = createAsyncThunk<IContactInList[]>(
+export const fetchContacts = createAsyncThunk<IContactInList[]>(
     'contacts/fetchContacts',
     async () => {
         const response = await axiosAPI.get<IContactAPI | null>('contacts.json');
@@ -45,7 +45,7 @@ const fetchContacts = createAsyncThunk<IContactInList[]>(
     }
 )
 
-const fetchSelectedContact = createAsyncThunk<IContact, string>(
+export const fetchSelectedContact = createAsyncThunk<IContact, string>(
     'contacts/fetchSelectedContact',
     async(id) => {
         const response = await axiosAPI.get<IContact>(`contacts/${id}.json`);
@@ -53,7 +53,7 @@ const fetchSelectedContact = createAsyncThunk<IContact, string>(
     }
 )
 
-const editContact = createAsyncThunk<void, IContact>(
+export const editContact = createAsyncThunk<void, IContact>(
     'contacts/editContact',
     async(contact) => {
         const editedContact: IContactMutation = {
@@ -67,14 +67,14 @@ const editContact = createAsyncThunk<void, IContact>(
     }
 )
 
-const deleteContact = createAsyncThunk<void, string>(
+export const deleteContact = createAsyncThunk<void, string>(
     'contacts/deleteContact',
     async(id) => {
         await axiosAPI.delete(`contacts/${id}`)
     }
 )
 
-const addContact = createAsyncThunk<void, IContactMutation>(
+export const addContact = createAsyncThunk<void, IContactMutation>(
     'contacts/addContact',
     async(contact) => {
         await axiosAPI.post('contacts.json', contact)
