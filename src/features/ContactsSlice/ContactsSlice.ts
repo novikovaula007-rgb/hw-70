@@ -24,12 +24,12 @@ const initialState: ContactsState = {
 }
 
 const fetchContacts = createAsyncThunk<IContactInList[]>(
-    'contacts/FetchContacts',
+    'contacts/fetchContacts',
     async () => {
-        const response = await axiosAPI.get<IContactAPI | null>('contacts');
+        const response = await axiosAPI.get<IContactAPI | null>('contacts.json');
         const contactsData = response.data;
         if (!contactsData) {
-            return []
+            return [];
         } else {
             return Object.keys(contactsData).map(key => {
                 const contact = contactsData[key];
@@ -40,6 +40,14 @@ const fetchContacts = createAsyncThunk<IContactInList[]>(
                 }
             });
         }
+    }
+)
+
+const fetchSelectedContact = createAsyncThunk<IContact, string>(
+    'contacts/fetchSelectedContact',
+    async(id) => {
+        const response = await axiosAPI.get<IContact>(`contacts/${id}.json`);
+        return response.data;
     }
 )
 
@@ -58,6 +66,16 @@ export const ContactsSlice = createSlice({
             })
             .addCase(fetchContacts.rejected, (state) => {
                 state.loading.loadingFetchContacts = false;
+            })
+            .addCase(fetchSelectedContact.pending, (state) => {
+                state.loading.loadingModalContact = true;
+            })
+            .addCase(fetchSelectedContact.fulfilled, (state, action) => {
+                state.selectedContact = action.payload;
+                state.loading.loadingModalContact = false;
+            })
+            .addCase(fetchSelectedContact.rejected, (state) => {
+                state.loading.loadingModalContact = false;
             })
     }
 })
